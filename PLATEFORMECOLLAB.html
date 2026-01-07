@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | Espace Collaboratif</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Icônes (FontAwesome gratuit) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    :root {
+      --primary: #4e54c8;
+      --secondary: #8f94fb;
+      --accent: #ff6b6b;
+      --glass-bg: rgba(255, 255, 255, 0.7);
+      --glass-border: rgba(255, 255, 255, 0.5);
+      --text-dark: #333;
+      --text-light: #666;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: #f0f2f5;
+      /* Léger gradient de fond */
+      background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+      min-height: 100vh;
+      display: flex;
+      overflow-x: hidden;
+    }
+
+    /* --- SIDEBAR --- */
+    .sidebar {
+      width: 250px;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
+      height: 100vh;
+      position: fixed;
+      left: 0;
+      top: 0;
+      padding: 20px;
+      border-right: 1px solid var(--glass-border);
+      display: flex;
+      flex-direction: column;
+      z-index: 100;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 40px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-links {
+      list-style: none;
+      flex: 1;
+    }
+
+    .nav-links li {
+      margin-bottom: 15px;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-dark);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 12px;
+      border-radius: 10px;
+      transition: all 0.3s;
+    }
+
+    .nav-links a:hover, .nav-links a.active {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 5px 15px rgba(78, 84, 200, 0.3);
+    }
+
+    .btn-logout {
+      background: #ffe5e5;
+      color: #d63031;
+      border: none;
+      padding: 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: 0.3s;
+      width: 100%;
+    }
+
+    .btn-logout:hover {
+      background: #ffcccc;
+    }
+
+    /* --- MAIN CONTENT --- */
+    .main-content {
+      margin-left: 250px;
+      flex: 1;
+      padding: 30px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+      color: var(--text-dark);
+    }
+
+    /* --- GRID LAYOUT --- */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+    }
+
+    .card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(15px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 25px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+      transition: transform 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .card h2 {
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+      color: var(--primary);
+      border-bottom: 2px solid rgba(0,0,0,0.05);
+      padding-bottom: 10px;
+    }
+
+    .full-width {
+      grid-column: 1 / -1;
+    }
+
+    /* --- FORMS --- */
+    form {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    input, select, textarea {
+      flex: 1;
+      padding: 10px 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      outline: none;
+      background: rgba(255,255,255,0.8);
+      transition: 0.3s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(78, 84, 200, 0.1);
+    }
+
+    button[type="submit"] {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: 0.3s;
+    }
+
+    button[type="submit"]:hover {
+      background: var(--secondary);
+    }
+
+    /* --- LISTS --- */
+    ul {
+      list-style: none;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    /* Scrollbar stylisée */
+    ul::-webkit-scrollbar { width: 6px; }
+    ul::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+
+    li {
+      background: rgba(255,255,255,0.5);
+      margin-bottom: 10px;
+      padding: 12px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: 0.2s;
+      border: 1px solid transparent;
+    }
+
+    li:hover {
+      background: white;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+
+    li.completed strong {
+      text-decoration: line-through;
+      color: #999;
+    }
+
+    /* --- ACTION BUTTONS --- */
+    .actions {
+      display: flex;
+      gap: 5px;
+    }
+
+    .btn-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      transition: 0.2s;
+    }
+
+    .btn-edit { background: #e3f2fd; color: #2196f3; }
+    .btn-edit:hover { background: #2196f3; color: white; }
+
+    .btn-delete { background: #ffebee; color: #f44336; }
+    .btn-delete:hover { background: #f44336; color: white; }
+
+    .btn-check { background: #e8f5e9; color: #4caf50; }
+    .btn-check:hover { background: #4caf50; color: white; }
+
+    /* --- TOAST NOTIFICATION --- */
+    #toast-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
+    }
+
+    .toast {
+      background: white;
+      color: #333;
+      padding: 15px 25px;
+      margin-top: 10px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      border-left: 5px solid var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: slideInRight 0.5s ease;
+    }
+
+    @keyframes slideInRight {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo">
+      <i class="fa-solid fa-layer-group"></i> WorkSpace
+    </div>
+    <ul class="nav-links">
+      <li><a href="#" class="active"><i class="fa-solid fa-house"></i> Vue d'ensemble</a></li>
+      <li><a href="dashboard.html"><i class="fa-solid fa-chart-pie"></i> Analytics</a></li>
+      <li><a href="#"><i class="fa-solid fa-users"></i> Équipes</a></li>
+      <!-- Le lien doit pointer vers le nouveau fichier -->
+      <li><a href="settings.html"><i class="fa-solid fa-gear"></i> Paramètres</a></li>
+    </ul>
+    <button onclick="logout()" class="btn-logout">
+      <i class="fa-solid fa-right-from-bracket"></i> Déconnexion
+    </button>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <header>
+      <div>
+        <h1>Tableau de Bord</h1>
+        <p style="color: var(--text-light);">Gérez vos projets et collaborez efficacement.</p>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <i class="fa-solid fa-bell" style="font-size: 1.2rem; color: var(--text-light); cursor: pointer;"></i>
+        <div style="width: 40px; height: 40px; background: var(--secondary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">Y</div>
+      </div>
+    </header>
+
+    <div class="dashboard-grid">
+      
+      <!-- PROJETS -->
+      <section class="card">
+        <h2><i class="fa-solid fa-folder-open"></i> Projets</h2>
+        <form id="projectForm">
+          <input type="text" id="projectName" placeholder="Nouveau projet..." required>
+          <button type="submit"><i class="fa-solid fa-plus"></i></button>
+        </form>
+        <ul id="projectList"></ul>
+      </section>
+
+      <!-- ÉQUIPES -->
+      <section class="card">
+        <h2><i class="fa-solid fa-users"></i> Équipes</h2>
+        <form id="teamForm">
+          <input type="text" id="teamName" placeholder="Nouvelle équipe..." required>
+          <button type="submit"><i class="fa-solid fa-plus"></i></button>
+        </form>
+        <ul id="teamList"></ul>
+      </section>
+
+      <!-- TÂCHES (Largeur complète) -->
+      <section class="card full-width">
+        <h2><i class="fa-solid fa-list-check"></i> Tâches</h2>
+        <form id="taskForm">
+          <select id="taskProject" required><option value="" disabled selected>Projet</option></select>
+          <select id="taskTeam" required><option value="" disabled selected>Équipe</option></select>
+          <input type="text" id="taskName" placeholder="Description de la tâche..." required style="flex: 2;">
+          <button type="submit">Ajouter</button>
+        </form>
+        <ul id="taskList"></ul>
+      </section>
+
+      <!-- COMMENTAIRES -->
+      <section class="card full-width">
+        <h2><i class="fa-solid fa-comments"></i> Fil de discussion</h2>
+        <form id="commentForm">
+          <select id="commentProject" required><option value="" disabled selected>Sur quel projet ?</option></select>
+          <textarea id="commentText" placeholder="Écrire un commentaire..." rows="1" required></textarea>
+          <button type="submit"><i class="fa-solid fa-paper-plane"></i></button>
+        </form>
+        <ul id="commentList"></ul>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Container pour les notifications -->
+  <div id="toast-container"></div>
+
+  <script>
+    // ==============================
+    // VARIABLES & DATA
+    // ==============================
+    let projects = [], teams = [], tasks = [], comments = [];
+
+    // ==============================
+    // LOCALSTORAGE
+    // ==============================
+    function saveData() {
+      localStorage.setItem("projects", JSON.stringify(projects));
+      localStorage.setItem("teams", JSON.stringify(teams));
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+      localStorage.setItem("comments", JSON.stringify(comments));
+    }
+
+    function loadData() {
+      projects = JSON.parse(localStorage.getItem("projects")) || [];
+      teams = JSON.parse(localStorage.getItem("teams")) || [];
+      tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+      comments = JSON.parse(localStorage.getItem("comments")) || [];
+    }
+
+    // ==============================
+    // UI HELPERS (Notifications)
+    // ==============================
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      const icon = type === 'success' ? '<i class="fa-solid fa-circle-check" style="color:#4caf50;"></i>' : '<i class="fa-solid fa-circle-info"></i>';
+      toast.innerHTML = `${icon} <span>${message}</span>`;
+      container.appendChild(toast);
+      
+      // Suppression auto après 3s
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 500);
+      }, 3000);
+    }
+
+    // ==============================
+    // REFRESH FUNCTIONS (Affichage)
+    // ==============================
+    const projectList = document.getElementById("projectList");
+    const taskProjectSelect = document.getElementById("taskProject");
+    const commentProjectSelect = document.getElementById("commentProject");
+    const teamList = document.getElementById("teamList");
+    const taskTeamSelect = document.getElementById("taskTeam");
+    const taskList = document.getElementById("taskList");
+    const commentList = document.getElementById("commentList");
+
+    function refreshProjects() {
+      projectList.innerHTML = "";
+      taskProjectSelect.innerHTML = '<option value="" disabled selected>Projet</option>';
+      commentProjectSelect.innerHTML = '<option value="" disabled selected>Sur quel projet ?</option>';
+
+      projects.forEach((p, index) => {
+        // Liste
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <strong>${p}</strong>
+          <div class="actions">
+            <button class="btn-icon btn-edit" onclick="editProject(${index})"><i class="fa-solid fa-pen"></i></button>
+            <button class="btn-icon btn-delete" onclick="deleteProject(${index})"><i class="fa-solid fa-trash"></i></button>
+          </div>`;
+        projectList.appendChild(li);
+
+        // Selects
+        let opt1 = document.createElement("option"); opt1.value = p; opt1.textContent = p;
+        taskProjectSelect.appendChild(opt1);
+        let opt2 = document.createElement("option"); opt2.value = p; opt2.textContent = p;
+        commentProjectSelect.appendChild(opt2);
+      });
+    }
+
+    function refreshTeams() {
+      teamList.innerHTML = "";
+      taskTeamSelect.innerHTML = '<option value="" disabled selected>Équipe</option>';
+
+      teams.forEach((t, index) => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <strong>${t}</strong>
+          <div class="actions">
+            <button class="btn-icon btn-edit" onclick="editTeam(${index})"><i class="fa-solid fa-pen"></i></button>
+            <button class="btn-icon btn-delete" onclick="deleteTeam(${index})"><i class="fa-solid fa-trash"></i></button>
+          </div>`;
+        teamList.appendChild(li);
+
+        let opt = document.createElement("option"); opt.value = t; opt.textContent = t;
+        taskTeamSelect.appendChild(opt);
+      });
+    }
+
+    function refreshTasks() {
+      taskList.innerHTML = "";
+      tasks.forEach((task, index) => {
+        const li = document.createElement("li");
+        li.draggable = true; // Pour Drag & Drop
+        if (task.completed) li.classList.add('completed');
+        
+        li.innerHTML = `
+          <div style="display:flex; flex-direction:column;">
+             <strong>${task.name}</strong>
+             <small style="color:var(--text-light); font-size:0.8rem;">
+               <i class="fa-solid fa-folder"></i> ${task.project} &bull; <i class="fa-solid fa-users"></i> ${task.team}
+             </small>
+          </div>
+          <div class="actions">
+            <button class="btn-icon btn-check" onclick="toggleTask(${index})">
+              <i class="fa-solid ${task.completed ? 'fa-rotate-left' : 'fa-check'}"></i>
+            </button>
+            <button class="btn-icon btn-edit" onclick="editTask(${index})"><i class="fa-solid fa-pen"></i></button>
+            <button class="btn-icon btn-delete" onclick="deleteTask(${index})"><i class="fa-solid fa-trash"></i></button>
+          </div>`;
+          
+        // Drag Events
+        li.addEventListener("dragstart", e => e.dataTransfer.setData("text/plain", index));
+        li.addEventListener("dragover", e => e.preventDefault());
+        li.addEventListener("drop", e => {
+          e.preventDefault();
+          const fromIndex = e.dataTransfer.getData("text/plain");
+          // Echange dans le tableau
+          [tasks[fromIndex], tasks[index]] = [tasks[index], tasks[fromIndex]];
+          saveData(); refreshTasks();
+        });
+
+        taskList.appendChild(li);
+      });
+    }
+
+    function refreshComments() {
+      commentList.innerHTML = "";
+      comments.forEach((c, index) => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <div>
+            <span style="background:var(--secondary); color:white; padding:2px 6px; border-radius:4px; font-size:0.7rem;">${c.project}</span>
+            <span style="margin-left:8px;">${c.text}</span>
+          </div>
+          <button class="btn-icon btn-delete" onclick="deleteComment(${index})"><i class="fa-solid fa-trash"></i></button>`;
+        commentList.appendChild(li);
+      });
+    }
+
+    // ==============================
+    // LOGIQUE CRUD
+    // ==============================
+    
+    // --- Projets ---
+    document.getElementById("projectForm").addEventListener("submit", e => {
+      e.preventDefault();
+      const name = document.getElementById("projectName").value;
+      if(name) {
+        projects.push(name);
+        document.getElementById("projectName").value = "";
+        saveData(); refreshProjects(); showToast("Projet créé !");
+      }
+    });
+
+    function editProject(index) {
+      const newName = prompt("Nouveau nom du projet :", projects[index]);
+      if(newName) {
+        const oldName = projects[index];
+        projects[index] = newName;
+        // Mise à jour en cascade
+        tasks.forEach(t => { if(t.project === oldName) t.project = newName; });
+        comments.forEach(c => { if(c.project === oldName) c.project = newName; });
+        saveData(); refreshProjects(); refreshTasks(); refreshComments();
+        showToast("Projet modifié");
+      }
+    }
+
+    function deleteProject(index) {
+      if(confirm("Supprimer ce projet et toutes ses tâches ?")) {
+        const name = projects[index];
+        projects.splice(index, 1);
+        tasks = tasks.filter(t => t.project !== name);
+        comments = comments.filter(c => c.project !== name);
+        saveData(); refreshProjects(); refreshTasks(); refreshComments();
+        showToast("Projet supprimé", "info");
+      }
+    }
+
+    // --- Équipes ---
+    document.getElementById("teamForm").addEventListener("submit", e => {
+      e.preventDefault();
+      const name = document.getElementById("teamName").value;
+      if(name) {
+        teams.push(name);
+        document.getElementById("teamName").value = "";
+        saveData(); refreshTeams(); showToast("Équipe ajoutée !");
+      }
+    });
+
+    function editTeam(index) {
+      const newName = prompt("Nouveau nom de l'équipe :", teams[index]);
+      if(newName) {
+        const oldName = teams[index];
+        teams[index] = newName;
+        tasks.forEach(t => { if(t.team === oldName) t.team = newName; });
+        saveData(); refreshTeams(); refreshTasks();
+      }
+    }
+    
+    function deleteTeam(index) {
+      if(confirm("Supprimer cette équipe ?")) {
+        teams.splice(index, 1);
+        saveData(); refreshTeams();
+        showToast("Équipe supprimée", "info");
+      }
+    }
+
+    // --- Tâches ---
+    document.getElementById("taskForm").addEventListener("submit", e => {
+      e.preventDefault();
+      const name = document.getElementById("taskName").value;
+      const project = taskProjectSelect.value;
+      const team = taskTeamSelect.value;
+
+      if(name && project && team) {
+        tasks.push({ name, project, team, completed: false });
+        document.getElementById("taskName").value = "";
+        saveData(); refreshTasks(); showToast("Tâche ajoutée !");
+      } else {
+        alert("Veuillez sélectionner un projet et une équipe.");
+      }
+    });
+
+    function toggleTask(index) {
+      tasks[index].completed = !tasks[index].completed;
+      saveData(); refreshTasks();
+      if(tasks[index].completed) showToast("Tâche terminée ! Bravo !");
+    }
+
+    function editTask(index) {
+      const t = tasks[index];
+      const newName = prompt("Modifier la tâche :", t.name);
+      if(newName) {
+        t.name = newName;
+        saveData(); refreshTasks();
+      }
+    }
+
+    function deleteTask(index) {
+      tasks.splice(index, 1);
+      saveData(); refreshTasks();
+      showToast("Tâche supprimée", "info");
+    }
+
+    // --- Commentaires ---
+    document.getElementById("commentForm").addEventListener("submit", e => {
+      e.preventDefault();
+      const project = commentProjectSelect.value;
+      const text = document.getElementById("commentText").value;
+      if(project && text) {
+        comments.push({ project, text });
+        document.getElementById("commentText").value = "";
+        saveData(); refreshComments();
+        showToast("Commentaire ajouté");
+      }
+    });
+
+    function deleteComment(index) {
+      comments.splice(index, 1);
+      saveData(); refreshComments();
+    }
+
+    // --- Auth ---
+    function logout() {
+      if(confirm("Voulez-vous vraiment vous déconnecter ?")) {
+        window.location.href = 'login.html';
+      }
+    }
+
+    // ==============================
+    // INITIALISATION
+    // ==============================
+    loadData();
+    refreshProjects();
+    refreshTeams();
+    refreshTasks();
+    refreshComments();
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connexion | Espace Collaboratif</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* --- RESET & BASE --- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      /* Dégradé animé moderne */
+      background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* --- CONTAINER GLASSMORPHISM --- */
+    .login-container {
+      width: 100%;
+      max-width: 400px;
+      padding: 20px;
+    }
+
+    .login-form {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      padding: 40px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+      opacity: 0;
+      transform: translateY(30px);
+      animation: slideIn 0.8s ease forwards;
+    }
+
+    @keyframes slideIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Animation de vibration en cas d'erreur */
+    .shake {
+      animation: shake 0.5s;
+    }
+
+    @keyframes shake {
+      0% { transform: translate(1px, 1px) rotate(0deg); }
+      10% { transform: translate(-1px, -2px) rotate(-1deg); }
+      20% { transform: translate(-3px, 0px) rotate(1deg); }
+      30% { transform: translate(3px, 2px) rotate(0deg); }
+      40% { transform: translate(1px, -1px) rotate(1deg); }
+      50% { transform: translate(-1px, 2px) rotate(-1deg); }
+      60% { transform: translate(-3px, 1px) rotate(0deg); }
+      100% { transform: translate(1px, -2px) rotate(-1deg); }
+    }
+
+    /* --- TYPOGRAPHIE --- */
+    .login-form h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-weight: 700;
+      color: #fff;
+      font-size: 1.8rem;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    /* --- CHAMPS INPUT --- */
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 500;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 12px 15px;
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    .input-group input::placeholder {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .input-group input:focus {
+      background: rgba(255, 255, 255, 0.3);
+      border-color: #fff;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+    }
+
+    /* --- BOUTON --- */
+    .btn-login {
+      width: 100%;
+      padding: 14px;
+      background: #fff;
+      color: #e73c7e;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 10px;
+    }
+
+    .btn-login:hover {
+      background: #f0f0f0;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    /* --- MESSAGE ERREUR --- */
+    #message-box {
+      margin-top: 15px;
+      text-align: center;
+      font-size: 0.9rem;
+      height: 20px;
+      font-weight: 600;
+    }
+    .error-msg { color: #ffcccc; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+    .success-msg { color: #ccffcc; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+
+  </style>
+</head>
+<body>
+
+  <div class="login-container">
+    <div class="login-form" id="loginFormCard">
+      <h2>Bienvenue</h2>
+      <form id="loginForm">
+        <div class="input-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="exemple@mundiapolis.com" required>
+        </div>
+        <div class="input-group">
+          <label for="password">Mot de passe</label>
+          <input type="password" id="password" name="password" placeholder="Votre mot de passe" required>
+        </div>
+        
+        <button type="submit" class="btn-login" id="submitBtn">Se connecter</button>
+        
+        <div id="message-box"></div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', function(event) {
+      event.preventDefault(); // Empêche le rechargement
+
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const msgBox = document.getElementById('message-box');
+      const formCard = document.getElementById('loginFormCard');
+      const btn = document.getElementById('submitBtn');
+
+      // Réinitialisation visuelle
+      msgBox.textContent = "";
+      msgBox.className = "";
+      formCard.classList.remove('shake');
+
+      // Simulation d'un petit délai de chargement pour le réalisme
+      btn.textContent = "Vérification...";
+      btn.style.opacity = "0.7";
+
+      setTimeout(() => {
+        if (email === 'Yann@mundiapolis.com' && password === '12345') {
+          // SUCCÈS
+          msgBox.textContent = "Connexion réussie ! Redirection...";
+          msgBox.className = "success-msg";
+          btn.textContent = "Succès";
+          
+          setTimeout(() => {
+             // Redirection vers la page suivante
+             window.location.href = 'PLATEFORMECOLLAB.html';
+          }, 1000);
+          
+        } else {
+          // ERREUR
+          msgBox.textContent = "Email ou mot de passe incorrect.";
+          msgBox.className = "error-msg";
+          formCard.classList.add('shake'); // Animation de vibration
+          
+          btn.textContent = "Se connecter";
+          btn.style.opacity = "1";
+        }
+      }, 600); // Fin du timeout de simulation
+    }); // Fin de l'event listener
+  </script>
+</body>
+</html>
